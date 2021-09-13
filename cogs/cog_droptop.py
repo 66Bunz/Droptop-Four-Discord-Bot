@@ -217,9 +217,8 @@ class DroptopCommands(commands.Cog, name='Droptop'):
 
         embed = discord.Embed(title='Beta Program', description='Enroll now to the Droptop Four Beta Program! The procedure is quite easy, just follow the guidelines below!', color=0x409bda)
         embed.set_author(name="Droptop Four", url=self.bot.dtsite, icon_url=self.bot.user.avatar_url)
-        embed.add_field(name='How', value='To enroll you have to have a Gmail account and send me the command `{0}beta-apply \"<name>\" \"<Gmail address>\"`'.format(self.bot.command_prefix), inline=False)
-        embed.add_field(name='IMPORTANT!!', value='You have to follow the syntax of the command or your subscription wont be guaranteed.\n**REMEMBER TO USE QUOTATION MARKS**', inline=False)
-        embed.add_field(name='Example', value='`{0}beta-apply \"John Doe\" \"john.doe@gmail.com\"`'.format(self.bot.command_prefix), inline=False)
+        embed.add_field(name='How', value='To enroll you have to have a Github account and send me the command `{0}beta-apply \"<name>\" \"<Github name>\"`'.format(self.bot.command_prefix), inline=False)
+        embed.add_field(name='Example', value='`{0}beta-apply \"John Doe\" \"johndoe66\"`'.format(self.bot.command_prefix), inline=False)
 
         if member is not None:
             channel = member.dm_channel
@@ -236,32 +235,32 @@ class DroptopCommands(commands.Cog, name='Droptop'):
 
 
     # @cog_ext.cog_slash(name="beta", description="Returns beta informations")
-    # async def slashbeta(self, ctx):
-    #   '''Returns beta informations'''
+    # async def slashbeta(self, ctx, member: discord.Member = None):
+    #     '''Sends informations on how to participate to the beta program'''
 
-    # 	embed=discord.Embed(title='Beta Program', description='Enroll now to the Droptop Four Beta Program! The procedure is quite easy, just follow the guidelines below!', color=0x409bda)
-    # 	embed.set_author(name="Droptop Four", url=self.bot.dtsite, icon_url=self.bot.user.avatar_url)
-    # 	embed.add_field(name='How', value='To enroll you have to have a Gmail account and send me the command `{0}beta-apply \"<name>\" \"<Gmail address>\"`'.format(self.bot.command_prefix), inline=False)
-    # 	embed.add_field(name='IMPORTANT!!', value='You have to follow the syntax of the command or your subscription wont be guaranteed.\n**REMEMBER TO USE QUOTATION MARKS**', inline=False)
-    # 	embed.add_field(name='Example', value='`{0}beta-apply \"John Doe\" \"john.doe@gmail.com\"`'.format(self.bot.command_prefix), inline=False)
+    #     embed = discord.Embed(title='Beta Program', description='Enroll now to the Droptop Four Beta Program! The procedure is quite easy, just follow the guidelines below!', color=0x409bda)
+    #     embed.set_author(name="Droptop Four", url=self.bot.dtsite, icon_url=self.bot.user.avatar_url)
+    #     embed.add_field(name='How', value='To enroll you have to have a Github account and send me the command `{0}beta-apply \"<name>\" \"<Github name>\"`'.format(self.bot.command_prefix), inline=False)
+    #     embed.add_field(name='Example', value='`{0}beta-apply \"John Doe\" \"johndoe66\"`'.format(self.bot.command_prefix), inline=False)
 
-    # 	# if member is not None:
-    # 	# 	channel=member.dm_channel
-    # 	# 	if channel is None:
-    # 	# 		channel=await member.create_dm()
-    # 	# 	await channel.send(embed=embed)
-    # 	# else:
-    # 	await ctx.author.send(embed=embed)
+    #     if member is not None:
+    #         channel = member.dm_channel
+    #         if channel is None:
+    #             channel = await member.create_dm()
+    #         await channel.send(embed=embed)
 
-    # 	base=discord.Embed(title='CHECK YOUR PMs (Personal Messages)!')
-    # 	embsend=await ctx.send(embed=base)
-    # 	time.sleep(5)
-    # 	await embsend.delete()
+    #     else:
+    #         await ctx.author.send(embed=embed)
+
+    #     base = discord.Embed(title='CHECK YOUR PMs (Personal Messages)!')
+    #     embsend = await ctx.send(embed=base)
+    #     time.sleep(5)
+    #     await embsend.delete()
 
 
     @commands.command(name='beta-apply', help='This command sends your personal details to participate in the beta program')
     @commands.dm_only()
-    async def bapply(self, ctx, name, gmail):
+    async def bapply(self, ctx, name, githubname):
         '''Sends your personal details to participate in the beta program'''
 
         server = self.bot.get_guild(self.bot.server_id)
@@ -271,30 +270,24 @@ class DroptopCommands(commands.Cog, name='Droptop'):
         if member:
             if role in member.roles:
                 await ctx.send("You already are a beta tester")
-
             else:
-                email = gmail
-                if re.search("@gmail.com$", email):
+                post = {"DateTime": now.strftime(
+					"%d/%m/%Y %H:%M:%S"), "UserID": ctx.author.id, "sID": ctx.author.display_name, "Name": name, "Github Name": githubname}
 
-                    post = {"DateTime": now.strftime("%d/%m/%Y %H:%M:%S"), "UserID": ctx.author.id, "sID": ctx.author.display_name, "Name": name, "Gmail": gmail}
+                embed = discord.Embed(title='Beta Program Enrollment', description='Your informations are being sent...', color=0x409bda)
+                embed.add_field(name='Your Informations:', value='```\nUserID: {0}\nsID: {1}\nName: {2}\nGithub Name: {3}\nDateTime: {4} UTC\n```'.format((ctx.author.id), (ctx.author.display_name), (name), (githubname), (now.strftime("%d/%m/%Y %H:%M:%S"))), inline=False)
+                await ctx.send(embed=embed)
 
-                    embed = discord.Embed(title='Beta Program Enrollment', description='Your informations are being sent...', color=0x409bda)
-                    embed.add_field(name='Your Informations:', value='```\nUserID: {0}\nsID: {1}\nName: {2}\nGmail: {3}\nDateTime: {4} UTC\n```'.format((ctx.author.id), (ctx.author.display_name), (name), (gmail), (now.strftime("%d/%m/%Y %H:%M:%S"))), inline=False)
-                    await ctx.send(embed=embed)
+                collection_d.insert_one(post)
 
-                    collection_d.insert_one(post)
+                base = discord.Embed(title='Beta Program Enrollment', description='Registration of <@{0}>'.format(ctx.author.id), color=0x409bda)
+                base.add_field(name='Informations:', value='```\nUserID: {0}\nsID: {1}\nName: {2}\nGithub Name: {3}\nDateTime: {4} UTC\n```'.format((ctx.author.id), (ctx.author.display_name), (name), (githubname), (now.strftime("%d/%m/%Y %H:%M:%S"))), inline=False)
 
-                    embed2 = discord.Embed(title='Beta Program Enrollment', description='Registration of <@{0}>'.format(ctx.author.id), color=0x409bda)
-                    embed2.add_field(name='Informations:', value='```\nUserID: {0}\nsID: {1}\nName: {2}\nGmail: {3}\nDateTime: {4} UTC\n```'.format((ctx.author.id), (ctx.author.display_name), (name), (gmail), (now.strftime("%d/%m/%Y %H:%M:%S"))), inline=False)
+                channel = self.bot.get_channel(self.bot.betachannel)
+                await channel.send(embed=base)
+                # print('valid email')
 
-                    channel = self.bot.get_channel(self.bot.betachannel)
-                    await channel.send(embed=embed2)
-
-                    await member.add_roles(role)
-
-                else:
-                    error = discord.Embed(title='Wrong eMail!', description='**The mail you put is not valid!**\nRemember it must be a **gmail** address, it must ends with `@gmail.com`', color=0xF70600)
-                    await ctx.send(embed=error)
+                await member.add_roles(role)
 
         else:
             await ctx.send("You are not a member")
