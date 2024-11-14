@@ -89,15 +89,23 @@
 - Install all dependencies with `pip install -r requirements.txt`
 
 - Create an `.env` file with the following configurations:
-  
-  ```bash
-  sentry_dsn=
-  mongodb_id=
-  db_cluster=
-  github_auth_app=
-  global_data_repo=
-  community_apps_repo=
-  community_themes_repo=
-  ```
+```bash
+DEBUG = "True"  # Set to False to use .env.prod file
+```
+- Create `.env.prod` and `.env.local` files with the following configurations:
+```bash
+sentry_dsn = 
+
+mongodb_id = 
+config_cluster = 
+droptop_creations_cluster = 
+droptop_cluster = 
+
+github_auth_app = 
+
+global_data_repo = 
+community_apps_repo = 
+community_themes_repo = 
+```
 
 - Start the bot with `python main.py`
