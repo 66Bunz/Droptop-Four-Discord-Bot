@@ -30,7 +30,7 @@ from utils import (
 
 load_dotenv()
 
-BOT_ENVIRONMENT = os.getenv("DEBUG") == "True"
+BOT_ENVIRONMENT = os.getenv("DEBUG", "True") == "True"
 
 if BOT_ENVIRONMENT:
     load_dotenv(".env.local")

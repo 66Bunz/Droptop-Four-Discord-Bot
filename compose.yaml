@@ -1,0 +1,7 @@
+services:
+    bot:
+        build: .
+        # environment: #for adding env variables to the container
+            # - VAR=5
+        # volumes: #for updating container files without restarting it means any external, local changes will affect this file
+            # - any_path/file.py:/mybot/file.py
